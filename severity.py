@@ -24,14 +24,17 @@ from sklearn.preprocessing import OneHotEncoder,StandardScaler
 
 
 def view_data():
-    raw_data = pd.read_csv('2011.csv', delimiter=',', engine='python')
+    raw_data = pd.read_csv('Data/2011.csv', delimiter=',', engine='python')
+    print(raw_data.columns.tolist())
     
     #for repeated data, and data that is uniform all through eg 'Computed', 'Time' is removed due to input errors
     raw_data = raw_data.drop(['Emirate','City','Road','Computed','Computed2','Streets',
                 'Gender of the injured','Fasten seat belt','Year','Month','Report type', 'Day',
-                'Inp Age','Date - Month', 'Age Group - Ministry', 'Time','Unnamed: 48','Injured person position',
+                'Inp Age','Date - Month', 'Age Group - Ministry', 'Time','Injured person position',
                 'Age Group', 'Weather','Road surface','Nationalities', 'Area','Block','Accident Description',
                 'Location.1'], axis=1)
+    #raw_data.columns.str.contains("^Unnamed")
+    raw_data = raw_data.loc[:, ~raw_data.columns.str.contains('^Unnamed')]
     print(raw_data.columns.tolist())
     return raw_data
 
@@ -82,7 +85,7 @@ def convert_reasons(data):
     raw_data = data
     reasons = pd.get_dummies(raw_data['Reasons'], prefix='_')
     raw_data = pd.concat([raw_data,reasons],axis=1) 
-    raw_data = raw_data.drop(['Reasons','__???? ?? ??????? (???)'], axis=1)
+    raw_data = raw_data.drop(['Reasons'], axis=1)
     return raw_data
 
 def convert_stations(data):
