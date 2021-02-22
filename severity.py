@@ -24,7 +24,7 @@ from sklearn.preprocessing import OneHotEncoder,StandardScaler
 
 
 def view_data():
-    raw_data = pd.read_csv('Data/2011.csv', delimiter=',', engine='python')
+    raw_data = pd.read_csv('newgen2011.csv', delimiter=',', engine='python')
     print(raw_data.columns.tolist())
     
     #for repeated data, and data that is uniform all through eg 'Computed', 'Time' is removed due to input errors
@@ -83,9 +83,11 @@ def convert_week(data):                    #convert names to titles....im guessi
 
 def convert_reasons(data):
     raw_data = data
-    reasons = pd.get_dummies(raw_data['Reasons'], prefix='_')
+    raw_data['Reasons']= raw_data['Reasons'].str.extract('([a-zA-Z ]+)',expand=False)
+    raw_data['ReasonsNew'] = raw_data['Reasons'].fillna('Misuse of traffic')
+    reasons = pd.get_dummies(raw_data['ReasonsNew'], prefix='Reasons_')
     raw_data = pd.concat([raw_data,reasons],axis=1) 
-    raw_data = raw_data.drop(['Reasons'], axis=1)
+    raw_data = raw_data.drop(['Reasons','ReasonsNew'], axis=1)
     return raw_data
 
 def convert_stations(data):
@@ -203,7 +205,8 @@ def convert_nationality_injured_person(data):
 
     print(raw_data['Number of Lanes'].head(170))
 
-    #raw_data.to_csv('SAMPLE4.csv',index=False)
+    raw_data.to_csv('SAMPLE8.csv',index=False)
+    print(raw_data.shape)
 
     return raw_data
 
