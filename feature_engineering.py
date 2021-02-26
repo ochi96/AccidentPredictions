@@ -1,10 +1,6 @@
 import os
 import numpy as np
 import string
-#from keras import models
-#from keras import layers
-#from keras.utils import to_categorical
-from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt 
 from matplotlib import style
 import pandas as pd 
@@ -12,28 +8,20 @@ import seaborn as sns
 import re
 import matplotlib.pyplot as partial_train_data
 from sklearn import linear_model
-from sklearn.linear_model import LogisticRegression,Perceptron,SGDClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier  
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC,LinearSVC
-from sklearn.naive_bayes import GaussianNB
-from sklearn.model_selection import cross_val_score,cross_val_predict,train_test_split
-from sklearn.metrics import confusion_matrix,precision_score,recall_score,roc_auc_score,precision_recall_curve,roc_curve
 from sklearn.preprocessing import OneHotEncoder,StandardScaler
 
 
 def view_data():
-    raw_data = pd.read_csv('newgen2011.csv', delimiter=',', engine='python')
+    raw_data = pd.read_csv('Data/accident_data.csv', delimiter=',', engine='python')
     print(raw_data.columns.tolist())
     
     #for repeated data, and data that is uniform all through eg 'Computed', 'Time' is removed due to input errors
     raw_data = raw_data.drop(['Emirate','City','Road','Computed','Computed2','Streets',
                 'Gender of the injured','Fasten seat belt','Year','Month','Report type', 'Day',
                 'Inp Age','Date - Month', 'Age Group - Ministry', 'Time','Injured person position',
-                'Age Group', 'Weather','Road surface','Nationalities', 'Area','Block','Accident Description',
+                'Age Group', 'Weather','Road surface', 'Area','Block','Accident Description',
                 'Location.1'], axis=1)
-    #raw_data.columns.str.contains("^Unnamed")
+                
     raw_data = raw_data.loc[:, ~raw_data.columns.str.contains('^Unnamed')]
     print(raw_data.columns.tolist())
     return raw_data
@@ -71,13 +59,14 @@ def convert_week(data):                    #convert names to titles....im guessi
     raw_data = raw_data.drop(['Date','Iac Rep Time'],axis=1)
     #change the format to datetime
     raw_data['Date_time'] = pd.to_datetime(raw_data['Date_time'])
-    raw_data['Date_time'] = raw_data['Date_time'].dt.strftime('%Y%m%d%H%M')
+    raw_data['Date_time'] = raw_data['Date_time'].dt.strftime('%m%d%H%M')
     raw_data['Date_time'].str.replace('[{}]'.format(string.punctuation), '')
+    raw_data['Date_time'] = raw_data['Date_time'].astype(int)
 
     days = {'Monday':0, 'Tuesday':1, 'Wednesday':2, 'Thursday':3, 'Friday':4, 'Saturday':5, 'Sunday':6}
     raw_data['Day.1'] = raw_data['Day.1'].map(days)
 
-    print(raw_data["Day.1"].head(10))
+    print(raw_data["Date_time"].head(10))
 
     return raw_data
 
@@ -133,6 +122,7 @@ def convert_place(data):
 
 def convert_location(data):
     raw_data = data
+
     locations = pd.get_dummies(raw_data['Location'], prefix='location_')
     raw_data = pd.concat([raw_data,locations],axis=1) 
     raw_data = raw_data.drop('Location', axis=1)
@@ -142,10 +132,18 @@ def convert_location(data):
 def convert_lighting(data):
     raw_data = data
     types = {'day':0,'night - enough lights':1}
-    raw_data['lighting'] = raw_data['lighting'].map(types)
+    raw_data['lighting'] = raw_data['lighting'].map(types).fillna(0)
     print(raw_data.head(10))
 
     return  raw_data
+
+def convert_nationality(data):
+    raw_data = data
+    nationalities = pd.get_dummies(raw_data['Nationalities'], prefix='nation_')
+    raw_data = pd.concat([raw_data, nationalities], axis=1)
+    raw_data = raw_data.drop(['Nationalities'],axis=1)
+    
+    return raw_data
 
 def convert_intersection(data):
     raw_data = data
@@ -205,14 +203,31 @@ def convert_nationality_injured_person(data):
 
     print(raw_data['Number of Lanes'].head(170))
 
-    raw_data.to_csv('SAMPLE8.csv',index=False)
+    #raw_data.to_csv('SAMPLE8.csv',index=False)
     print(raw_data.shape)
 
     return raw_data
 
 
+def normalize(data):
+    raw_data = data
+    train_targets = raw_data['Degree of the injury']
+    train_data = raw_data.drop(['Degree of the injury','Week'],axis=1)
 
-
+    #severity = {'Minor':0, 'Moderate':1, 'Severe':2}
+    train_targets= train_targets.fillna('Moderate')
+    
+    sc = StandardScaler()
+    dataset_numerical_features = list(train_data.select_dtypes(include=['int64','float64','int32','float32']).columns)
+    dataset_scaled = pd.DataFrame(data=train_data)
+    dataset_scaled[dataset_numerical_features] = sc.fit_transform(dataset_scaled[dataset_numerical_features])
+    #dataset=sc.fit_transform(dataset)
+    print(train_data.head(3))
+    train_data.to_csv('train_data0.csv', index=False)
+    
+    train_targets.to_csv('train_targets1.csv', index = False)
+    
+    return train_data, train_targets
 
 
 
@@ -225,10 +240,13 @@ streetlove = convert_stations(stationlove)
 placelove = convert_street(streetlove)
 locationlove = convert_place(placelove)
 lightinglove = convert_location(locationlove)
-intersectionlove = convert_lighting(lightinglove)
+nationalitylove = convert_nationality(lightinglove)
+intersectionlove = convert_lighting(nationalitylove)
 accidenttypelove = convert_intersection(intersectionlove)
 seatbeltlove = convert_accident_type(accidenttypelove)
 injuredpersonpositionlove = convert_seatbelt(seatbeltlove)
 nationalitylove = convert_injured_person_position(injuredpersonpositionlove)
-convert_nationality_injured_person(nationalitylove)
+normalizelove = convert_nationality_injured_person(nationalitylove)
+#hisownlove = normalize(normalizelove)
+#kfoldvalidation(hisownlove)
 

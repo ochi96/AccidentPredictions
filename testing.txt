@@ -1,0 +1,122 @@
+choose a random sample to represent the test dataset, drop the severity column.
+
+Degree of the injury
+
+
+exact number: 
+
+Overview
+Problem Description
+
+Pharmaceutical companies continuously look at marketing their brands via various channels like Advertisements, TV, Online sites e.t.c. to make sure that there is better awareness of the brand. These companies also want to enrich their Physician/Hospitals information and analyze the ROI to calculate the efficiency of investment against each brand and Physician/Hospitals.
+
+Evaluation
+Goal
+To create an analytical framework to convert unstructured datasets of different kinds into structured formats.
+To model the structured dataset ( as Fact and Dimension) and pass it to a Business Intelligence tool for further analysis.
+
+
+
+
+Specific goals
+On the basis of the given data, build a machine learning model that will predict the spend on top 3 brands in year 2022 by each device type.
+On the basis of the given data, build a machine learning model to help the company decide on its spending against the preferred the AD distribution channel (search/Audience) in 2022.
+Data modelling to be performed to join the tables and identify key KPIs.
+Input 1 should be linked to Input 2 based on Brand Name.
+Input 3 should be leveraged to web scrape the data from the NPI website into the Output_data_file.CSV. In case of deactivated NPI, leverage this information for the dashboard.
+Input 2 should be linked Input 3 for analysis.
+HCP/Physician names to be updated with a default name (e.g., NA) for all NPI’s with no information on the NPI site.
+
+4. Visualize structured data to achieve below Results.
+
+HCPs/ Physicians by state & taxonomy.
+Count of Activate & De-Activated HCPs/ Physicians.
+Top & Bottom 3 Brands by state based on Clicks with Top performing HCP/Physician.
+Top & Bottom 3 Brands by state based on Impressions with Top performing HCP/Physician.
+Brand wise spent for deactivated HCPs/Physicians.
+Showcase the Bad records in input_data_file1.pdf
+
+
+
+
+Tools
+R/Python, for web-scraping.
+Any database (DQL/Postgres) to store the data.
+Any Business Intelligence tool (Power BI, Tableau, Qlik, MSTR, ThoughtSpot etc) for dashboarding and visualization purpose
+
+
+
+
+Convert PDF inputs to tabular formats (output can be stored in any database).
+
+Web Scraping or text mining to be used based on all NPI numbers available in Input_data_file3 from this website (https://npiregistry.cms.hhs.gov/).
+
+
+
+
+Metric
+
+The evaluation criteria is as follows:
+
+
+
+
+
+
+
+
+
+
+Submission File Format
+
+The following files and requirements are expected:
+
+R/Python Code (for unstructured to structured conversion).
+In case the Physician is active please call it out in the expected format - Output_Data_File.csv.
+In case the Physician is de-activated, please capture the NPI in a DB(output can be stored in any database)
+Brief write-up on the solution (PowerPoint presentation: 4-6 slides): Few pointers for the write up (for reference only)
+Understanding of the objective.
+Step wise approach to solution.
+Details of Web Scraping or text mining approach used.
+Additional insights based on understanding.
+
+
+
+
+
+
+
+Data
+Overview
+
+Three datasets will be provided:
+
+Input_Data_File1.pdf.This contains historical data of all the advertisements executed for different brands with the eventual outcomes.
+Input_Data_File2.pdf.This contains list of Brands with NPI(National Provider Identifier) details of HCPs(HealthCare Providers)/Physicians on these brands.
+Input_Data_File3.pdf.This contains list NPI/Physician that are to be referenced and web scraped.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Note about some specific variables (columns), their meaning, range and type...
+
+
+
+type	fixed acidity	volatile acidity	citric acid	residual sugar	chlorides	free sulfur dioxide	total sulfur dioxide	density	pH	sulphates	alcohol	quality
+
+
+
+
